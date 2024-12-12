@@ -1,3 +1,7 @@
+# Input file must be in the format below:
+    # every two reads are continuous
+    # reads that are not sequenced at every SNP are not permitted
+    # SNP positions include at least one read
 import numpy as np
 
 def read_file(file):
