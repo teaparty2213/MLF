@@ -7,10 +7,10 @@ import random
 import numpy as np
 import networkx as nx
 
-def random_gen():
-    r = random.randint(30, 40)
+def random_gen(read_num):
+    r = random.randint(read_num - read_num // 10, read_num + read_num // 10)
     s = r
-    min_range = 5
+    min_range = read_num // 5
     
     M = []
     start_idx = 0
@@ -44,10 +44,10 @@ def random_gen():
             
     return r, s, new_M
 
-def gen_planar_data():
+def gen_planar_data(read_num):
     non_planar = True
     while (non_planar):
-        r, s, M = random_gen()
+        r, s, M = random_gen(read_num)
         K = 25
         
         # check if the maximum coverage of M is less than K
@@ -62,10 +62,24 @@ def gen_planar_data():
             non_planar = False # planar data is generated
     return r, s, M
 
-def gen_data(path):
-    # generate 5 random planar data
-    for i in range(1, 6):
-        r, s, M = gen_planar_data()
+def gen_non_planar_data(read_num):
+    cov_cond = True
+    while (cov_cond):
+        r, s, M = random_gen(read_num)
+        K = 25
+        
+        # check if the maximum coverage of M is less than K
+        read_range_list = read_range(r, s, M)
+        max_cov = max_coverage(read_range_list)
+        if (max_cov < K):
+            cov_cond = False # planar data is generated
+            
+    return r, s, M
+
+def main_planar(path, file_num, read_num):
+    # generate random planar data
+    for i in range(1, file_num + 1):
+        r, s, M = gen_planar_data(read_num)
         file = '{}/input_'.format(path) + str(i) + '.txt'
         with open(file, 'w') as f:
             f.write(str(r) + '\n')
@@ -73,4 +87,16 @@ def gen_data(path):
             for row in M:
                 f.write(''.join(['-' if char == -1 else str(char) for char in row]) + '\n')
                 
-gen_data('../data/planar_data')
+def main_non_planar(path, file_num, read_num):
+    # generate random non planar data
+    for i in range(1, file_num + 1):
+        r, s, M = gen_non_planar_data(read_num)
+        file = '{}/input_'.format(path) + str(i) + '.txt'
+        with open(file, 'w') as f:
+            f.write(str(r) + '\n')
+            f.write(str(s) + '\n')
+            for row in M:
+                f.write(''.join(['-' if char == -1 else str(char) for char in row]) + '\n')
+
+#main_non_planar('../data', 10, 100)
+#main_planar('../data/planar_data', 10, 18) # read_numは18ぐらいが限界で，それ以上だとplanarなグラフが全く生成できない
