@@ -4,32 +4,12 @@
 ## Left to do: implement traceback to find the optimal bipartition
 ## Special thanks to Tomoyuki Unno for helping implement
 ##-------------------------------------------------------------
-
+from read_range import read_range
+from max_coverage import max_coverage
 from open_input_file import read_file
 from gray_code import gray_code, gray_code_dif_bit, get_Nth_bit
 import numpy as np
 import time
-
-def read_range(r, s, M): # calculate the range of read index at each site
-    read_range_list = []
-    first = 0
-    last = 0
-    for j in range(s):
-        i = 0
-        while (i < r and M[i][j] == -1):
-            i += 1
-        first = i
-        while (i < r and M[i][j] != -1):
-            i += 1
-        last = i - 1
-        read_range_list.append((first, last))
-    return read_range_list
-
-def max_coverage(read_range_list):
-    max_coverage = 0
-    for i in range(len(read_range_list)):
-        max_coverage = max(max_coverage, read_range_list[i][1] - read_range_list[i][0] + 1)
-    return max_coverage
 
 def count_allele(M, j, first, last, gray): # count the number of 0s and 1s in Group X and Y at site j
     count = [0, 0, 0, 0] # count[0]: #0 in X, count[1]: #1 in X, count[2]: #0 in Y, count[3]: #1 in Y
