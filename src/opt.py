@@ -125,5 +125,6 @@ def main(path):
     
     print("Minimum Letter Flip: {}".format(min_D))
     print("Time: {}s".format(end - start))
+    print("K = {}".format(K))
 
-main('../data/input_1.txt')
+main('../data/input_10.txt')
