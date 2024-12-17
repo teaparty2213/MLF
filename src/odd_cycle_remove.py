@@ -6,6 +6,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import time
 
 def find_odd_cycles(G):
     cycles = nx.chordless_cycles(G) # chord: an edge that is not part of the cycle but connects two nodes in the cycle
@@ -28,16 +29,29 @@ def odd_cycle_remove(G, s):
                     cycle_edges.append((edge, weight))
             min_weight = min(cycle_edges, key=lambda x: x[1])[1]
             min_edges = [edge for edge, weight in cycle_edges if weight == min_weight]
+            #print(min_edges)
             selected_edge = random.choice(min_edges)
-            sum += selected_edge[1]
+            #print(selected_edge)
+            sum += G[selected_edge[0]][selected_edge[1]]['weight']
             G.remove_edge(*selected_edge)
+        #nx.draw_planar(G, with_labels=True)
+        #plt.show()
+        #print(sum)
     return sum
 
 def main(path):
     r, s, M = read_file(path)
     G = build_graph(r, s, M)
     is_planar, embedding = nx.check_planarity(G, counterexample=False)
+    #nx.draw_planar(G, with_labels=True)
+    #plt.show()
+    start = time.perf_counter()
     sum = odd_cycle_remove(G, s)
-    print(sum)
+    end = time.perf_counter()
     
-main('../data/input_1.txt')
+    print("Letter Flip: {}".format(sum))
+    print("Time: {}s".format(end - start))
+    #nx.draw_planar(G, with_labels=True)
+    #plt.show()
+    
+main('../data/input_0.txt')
