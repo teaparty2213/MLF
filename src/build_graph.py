@@ -3,8 +3,9 @@ import networkx as nx
 def edge_weight_calc(i, j, M): # compare M[i] and M[j]
     sum = 0
     for k in range(0, len(M[i])):
-        if (M[i][k] == 1 and M[j][k] == 0) or (M[i][k] == 0 and M[j][k] == 1):
-            sum += 1
+        if (M[i][k] != '-' and M[j][k] != '-'):
+            if (M[i][k] != M[j][k]):
+                sum += 1
     return sum
                 
 def build_graph(r, s, M):
