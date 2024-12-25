@@ -38,20 +38,3 @@ def odd_cycle_remove(G, s):
         #plt.show()
         #print(sum)
     return sum
-
-def main(path):
-    r, s, M = read_file(path)
-    G = build_graph(r, s, M)
-    is_planar, embedding = nx.check_planarity(G, counterexample=False)
-    #nx.draw_planar(G, with_labels=True)
-    #plt.show()
-    start = time.perf_counter()
-    sum = odd_cycle_remove(G, s)
-    end = time.perf_counter()
-    
-    print("Letter Flip: {}".format(sum))
-    print("Time: {}s".format(end - start))
-    #nx.draw_planar(G, with_labels=True)
-    #plt.show()
-    
-main('../data/input_0.txt')

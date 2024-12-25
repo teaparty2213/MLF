@@ -113,18 +113,3 @@ def opt_algo(r, s, M, read_range_list, K): # O(2^K*s) time exact algorithm for h
         shared_D = pre_shared_D.copy()
         pre_shared_D = [r * s] * max_states
     return min_D
-
-def main(path):
-    r, s, M = read_file(path)
-    
-    start = time.perf_counter()
-    read_range_list = read_range(r, s, M)
-    K = max_coverage(read_range_list)
-    min_D = opt_algo(r, s, M, read_range_list, K)
-    end = time.perf_counter()
-    
-    print("Minimum Letter Flip: {}".format(min_D))
-    print("Time: {}s".format(end - start))
-    print("K = {}".format(K))
-
-main('../data/input_10.txt')
