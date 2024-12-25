@@ -1,3 +1,4 @@
+# haplotype phasing for N-ploid organisms
 from open_input_file import read_file
 from read_range import read_range
 from max_coverage import max_coverage
@@ -8,7 +9,7 @@ import numpy as np
 import time
 
 def main(path):
-    r, s, M = read_file(path)
+    r, s, M, N = read_file(path)
     
     # optimal algorithm
     start = time.perf_counter()
@@ -21,7 +22,7 @@ def main(path):
     # heuristic algorithm
     G = build_graph(r, s, M)
     start = time.perf_counter()
-    cost = color_annealing(r, s, M, G)
+    cost, color = color_annealing(r, s, M, N, G)
     end = time.perf_counter()
     time2 = end - start
     
