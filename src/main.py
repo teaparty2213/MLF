@@ -7,11 +7,12 @@ from build_graph import build_graph
 from color_annealing import color_annealing
 import numpy as np
 import time
+import matplotlib.pyplot as plt
 
 def main(path):
     r, s, M, N = read_file(path)
     
-    # optimal algorithm
+    # exact algorithm
     start = time.perf_counter()
     read_range_list = read_range(r, s, M)
     K = max_coverage(read_range_list)
@@ -22,7 +23,7 @@ def main(path):
     # heuristic algorithm
     G = build_graph(r, s, M)
     start = time.perf_counter()
-    cost, color = color_annealing(r, s, M, N, G)
+    cost, color, cost_history = color_annealing(r, s, M, N, G)
     end = time.perf_counter()
     time2 = end - start
     
@@ -30,4 +31,14 @@ def main(path):
     print("ALG: ", cost, "Time: ", time2)
     print("approximation ratio: ", cost / min_D)
     
-main('../data/input_0.txt')
+    # plot
+    iteration = []
+    for i in range(0, len(cost_history)):
+        iteration.append(i)
+    plt.plot(iteration, cost_history)
+    plt.plot([0, len(cost_history)], [min_D, min_D], color='red')
+    plt.xlabel("iteration")
+    plt.ylabel("cost")
+    plt.show()
+    
+main('../data/diploid/input_0.txt')
