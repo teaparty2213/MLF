@@ -39,6 +39,7 @@ def main(path):
     plt.plot([0, len(cost_history)], [min_D, min_D], color='red')
     plt.xlabel("iteration")
     plt.ylabel("cost")
+    #plt.savefig("./../result/250101.png")
     plt.show()
     
 main('../data/diploid/input_0.txt')
