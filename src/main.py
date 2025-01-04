@@ -2,44 +2,48 @@
 from open_input_file import read_file
 from read_range import read_range
 from max_coverage import max_coverage
-from opt import opt_algo
+from opt import opt_for_diploid
 from build_graph import build_graph
 from color_annealing import color_annealing
+from open_file_for_polyploid import read_file_of_polyploid
 import numpy as np
 import time
 import matplotlib.pyplot as plt
 
 def main(path):
+    '''
     r, s, M, N = read_file(path)
     
     # exact algorithm
     start = time.perf_counter()
     read_range_list = read_range(r, s, M)
     K = max_coverage(read_range_list)
-    min_D = opt_algo(r, s, M, read_range_list, K)
+    min_D = opt_for_diploid(r, s, M, read_range_list, K)
     end = time.perf_counter()
     time1 = end -start
+    '''
     
-    # heuristic algorithm
+    N, r, s, M, err_num, ans_list, haplotypes = read_file_of_polyploid(path)
+    # heuristic
     G = build_graph(r, s, M)
     start = time.perf_counter()
     cost, color, cost_history = color_annealing(r, s, M, N, G)
     end = time.perf_counter()
     time2 = end - start
     
-    print("OPT: ", min_D, "Time: ", time1)
+    print("N: ", N)
+    print("OPT: ", err_num)
     print("ALG: ", cost, "Time: ", time2)
-    print("approximation ratio: ", cost / min_D)
+    print("approximation ratio: ", cost / err_num)
     
     # plot
-    iteration = []
-    for i in range(0, len(cost_history)):
-        iteration.append(i)
+    iteration = list(range(0, len(cost_history)))
     plt.plot(iteration, cost_history)
-    plt.plot([0, len(cost_history)], [min_D, min_D], color='red')
+    plt.plot([0, len(cost_history)], [err_num, err_num], color='red')
     plt.xlabel("iteration")
     plt.ylabel("cost")
-    #plt.savefig("./../result/250101.png")
+    plt.title("number of errors in {}-ploid".format(N))
+    plt.savefig("./../result/250104_{}-ploid.png".format(N))
     plt.show()
     
-main('../data/diploid/input_0.txt')
+main('../data/polyploid/input_3.txt')

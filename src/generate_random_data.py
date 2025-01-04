@@ -7,7 +7,7 @@ import random
 import numpy as np
 import networkx as nx
 
-def random_gen(read_num):
+def random_gen(read_num, N):
     r = random.randint(read_num - read_num // 10, read_num + read_num // 10)
     s = r
     min_range = read_num // 5
@@ -23,7 +23,7 @@ def random_gen(read_num):
             if (end_idx >= s):
                 end_idx = s - 1
         non_negative_len = end_idx - start_idx + 1
-        non_negative_values = np.random.choice([0, 1], non_negative_len)
+        non_negative_values = list(np.random.randint(0, N, size=non_negative_len))
         row[start_idx : start_idx + non_negative_len] = non_negative_values
         M.append(row)
     
@@ -44,7 +44,7 @@ def random_gen(read_num):
             
     return r, s, new_M
 
-def gen_planar_data(read_num):
+def gen_planar_data(read_num): # 変数Nに非対応(未実装)
     non_planar = True
     while (non_planar):
         r, s, M = random_gen(read_num)
@@ -62,21 +62,27 @@ def gen_planar_data(read_num):
             non_planar = False # planar data is generated
     return r, s, M
 
-def gen_non_planar_data(read_num):
+def gen_non_planar_data(read_num, N):
     cov_cond = True
     while (cov_cond):
-        r, s, M = random_gen(read_num)
-        K = 25
+        r, s, M = random_gen(read_num, N)
+        K = 0
+        if N == 2:
+            K = 24
+        elif N == 3:
+            K = 15
+        elif N == 4:
+            K = 12
         
         # check if the maximum coverage of M is less than K
         read_range_list = read_range(r, s, M)
         max_cov = max_coverage(read_range_list)
-        if (max_cov < K):
-            cov_cond = False # planar data is generated
-            
+        if (max_cov <= K):
+            cov_cond = False
+
     return r, s, M
 
-def main_planar(path, file_num, read_num):
+def main_planar(path, file_num, read_num): # 変数Nに非対応(未実装)
     # generate random planar data
     for i in range(1, file_num + 1):
         r, s, M = gen_planar_data(read_num)
@@ -87,10 +93,10 @@ def main_planar(path, file_num, read_num):
             for row in M:
                 f.write(''.join(['-' if char == -1 else str(char) for char in row]) + '\n')
                 
-def main_non_planar(path, file_num, read_num):
+def main_non_planar(path, file_num, read_num, N): # N: the number of haplotypes
     # generate random non planar data
     for i in range(1, file_num + 1):
-        r, s, M = gen_non_planar_data(read_num)
+        r, s, M = gen_non_planar_data(read_num, N)
         file = '{}/input_'.format(path) + str(i) + '.txt'
         with open(file, 'w') as f:
             f.write(str(r) + '\n')
@@ -98,5 +104,5 @@ def main_non_planar(path, file_num, read_num):
             for row in M:
                 f.write(''.join(['-' if char == -1 else str(char) for char in row]) + '\n')
 
-#main_non_planar('../data', 10, 100)
-#main_planar('../data/planar_data', 10, 18) # read_numは18ぐらいが限界で，それ以上だとplanarなグラフが全く生成できない
+main_non_planar('../data/tetraploid', 10, 24, 2)
+#main_planar('../data/planar_data', 10, 18) # N=2だとread_numは18ぐらいが限界で，それ以上だとplanarなグラフが全く生成できない

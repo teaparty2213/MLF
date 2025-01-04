@@ -4,9 +4,6 @@
 ## Left to do: implement traceback to find the optimal bipartition
 ## Special thanks to Tomoyuki Unno for helping implement
 ##-------------------------------------------------------------
-from read_range import read_range
-from max_coverage import max_coverage
-from open_input_file import read_file
 from gray_code import gray_code, gray_code_dif_bit, get_Nth_bit
 import numpy as np
 import time
@@ -29,7 +26,7 @@ def count_allele(M, j, first, last, gray): # count the number of 0s and 1s in Gr
         bit_shift += 1
     return count
 
-def opt_algo(r, s, M, read_range_list, K): # O(2^K*s) time exact algorithm for heterozygous phasing
+def opt_for_diploid(r, s, M, read_range_list, K): # O(2^K*s) time exact algorithm for phasing
     max_states = 2 ** K
     D = [[r * s] * max_states for i in range(s)] # DP table for the minimum number of errors (column: site, row: gray_code)
     shared_D = [r * s] * max_states # current minimum number of errors
