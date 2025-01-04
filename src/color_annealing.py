@@ -1,7 +1,9 @@
 # heuristic for polyploid phasing: Modeling with graph coloring, then solve with simulated annealing.
 from build_graph import build_graph
+from bfs_coloring import bfs_coloring
 import random
 import math
+import networkx as nx
 
 def update_C(G, color, C, v):
     for u in G.neighbors(v): # check if all neighbors of neighbor(v) have different colors
@@ -32,9 +34,11 @@ def color_annealing(r, s, M, N, G):
     C = [0] * r # 1 = vertices that have the same color with their neighbors
     
     # initial coloring
-    color = [-1] * r
-    for i in range(r):
-        color[i] = random.randint(0, N - 1)
+    start = 0 # a vertex which has the maximum degree in G
+    for v in G.nodes():
+        if G.degree(v) > G.degree(start):
+            start = v
+    color = bfs_coloring(G, start, r, N)
     for e in G.edges():
         if color[e[0]] == color[e[1]]:
             cost += G[e[0]][e[1]]['weight']
