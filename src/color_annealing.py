@@ -5,87 +5,57 @@ import random
 import math
 import networkx as nx
 
-def update_C(G, color, C, v):
-    for u in G.neighbors(v): # check if all neighbors of neighbor(v) have different colors
-        all_dif = True
-        for w in G.neighbors(u):
-            if color[w] == color[u]:
-                all_dif = False
-                break
-        if all_dif:
-            C[u] = 0
-        else:
-            C[u] = 1
-    all_dif = True # check if all neighbors of v have different colors
-    for u in G.neighbors(v):
-        if color[u] == color[v]:
-            all_dif = False
-            break
-    if all_dif:
-        C[v] = 0
-    else:
-        C[v] = 1
-    return C
-
-def color_annealing(r, s, M, N, G):
+def color_annealing(r, s, M, N, G, H):
     cost = 0
     cost_history = []
     T = 0 # initial temperature
-    C = [0] * r # 1 = vertices that have the same color with their neighbors
     
     # initial coloring
     start = 0 # a vertex which has the maximum degree in G
     for v in G.nodes():
         if G.degree(v) > G.degree(start):
             start = v
-    color = bfs_coloring(G, start, r, N)
+    color = bfs_coloring(G, H, start, r, N)
     for e in G.edges():
         if color[e[0]] == color[e[1]]:
             cost += G[e[0]][e[1]]['weight']
-        T += G[e[0]][e[1]]['weight']
+        T += G[e[0]][e[1]]['weight'] # high temperature
     T /= r
-    for v in G.nodes():
-        for u in G.neighbors(v):
-            if color[v] == color[u]:
-                C[v] = 1
-                break
     cost_history.append(cost)
     
     # iteration
     stay = 0
     while (stay < 20 and T > 0.0001):
         delta_min = r * s
-        best_v = -1
-        new_color = -1
+        delta_min_list = []
         for v in range(0, r):
             for i in range(0, N):
-                if i != color[v]:
+                if i != color[v]: # change v's color to i
                     delta = 0
                     for u in G.neighbors(v):
+                        w = G[v][u]['weight']
                         if color[u] == i:
-                            delta += G[v][u]['weight']
-                        if color[u] == color[v]:
-                            delta -= G[v][u]['weight']
+                            delta += w
+                        elif color[u] == color[v]:
+                            delta -= w
                     if delta < delta_min:
+                        delta_min_list = []
                         delta_min = delta
-                        best_v = v
-                        new_color = i
-        delta = delta_min
-        v = best_v
-        i = new_color
+                        delta_min_list.append((v, i))
+                    elif delta == delta_min:
+                        delta_min_list.append((v, i))
+        v, i = random.choice(delta_min_list)
         
-        if delta <= 0:
+        if delta_min <= 0:
             color[v] = i
-            cost += delta
-            C = update_C(G, color, C, v)
-            if delta == 0:
+            cost += delta_min
+            if delta_min == 0:
                 stay += 1
         else:
-            p = math.exp(-delta / T)
+            p = math.exp(-delta_min / T)
             if random.random() < p:
                 color[v] = i
-                cost += delta
-                C = update_C(G, color, C, v)
+                cost += delta_min
                 stay = 0
             else:
                 stay += 1

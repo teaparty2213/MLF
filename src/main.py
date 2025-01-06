@@ -9,6 +9,7 @@ from open_file_for_polyploid import read_file_of_polyploid
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+import networkx as nx
 
 def main(path):
     '''
@@ -25,9 +26,9 @@ def main(path):
     
     N, r, s, M, err_num, ans_list, haplotypes = read_file_of_polyploid(path)
     # heuristic
-    G = build_graph(r, s, M)
+    G, H = build_graph(r, s, M)
     start = time.perf_counter()
-    cost, color, cost_history = color_annealing(r, s, M, N, G)
+    cost, color, cost_history = color_annealing(r, s, M, N, G, H)
     end = time.perf_counter()
     time2 = end - start
     
@@ -43,7 +44,7 @@ def main(path):
     plt.xlabel("iteration")
     plt.ylabel("cost")
     plt.title("number of errors in {}-ploid".format(N))
-    plt.savefig("./../result/250104_{}-ploid.png".format(N))
+    plt.savefig("./../result/250106_{}-ploid.png".format(N))
     plt.show()
     
 main('../data/polyploid/input_3.txt')
