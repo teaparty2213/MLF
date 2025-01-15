@@ -5,7 +5,7 @@ import random
 import math
 import networkx as nx
 
-def color_annealing(r, s, N, G, H, alpha):
+def color_annealing(r, s, N, G, H, alpha, neighbor_rate):
     cost = 0
     cost_history = []
     T = 0 # initial temperature
@@ -26,11 +26,10 @@ def color_annealing(r, s, N, G, H, alpha):
     stay = 0
     iteration = 0
     while (T > 0.0001 and stay < 30):
-        if iteration % 100 == 0:
-            print("iteration: ", iteration, "cost: ", cost, "T: ", T)
         delta_min = r * s
         delta_min_list = []
-        for v in range(0, r):
+        V = [random.randint(0, r - 1) for _ in range(0, round(r * neighbor_rate))]
+        for v in V:
             for i in range(0, N):
                 if i != color[v]: # change v's color to i
                     delta = 0
@@ -64,5 +63,8 @@ def color_annealing(r, s, N, G, H, alpha):
         T *= alpha
         iteration += 1
         cost_history.append(cost)
+        
+        if iteration % 100 == 0:
+            print("iteration: ", iteration, "cost: ", cost, "T: ", T)
     
     return cost, color, cost_history

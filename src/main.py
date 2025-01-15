@@ -27,8 +27,8 @@ def main(path):
     N, r, s, M, err_num, ans_list, haplotypes = read_file_of_polyploid(path)
     # heuristic
     start = time.perf_counter()
-    G, H = build_graph(r, s, M, read_share_ratio=0.7)
-    cost, color, cost_history = color_annealing(r, s, N, G, H, alpha=0.99)
+    G, H = build_graph(r, s, M, read_share_ratio=0.9)
+    cost, color, cost_history = color_annealing(r, s, N, G, H, alpha=0.9, neighbor_rate=0.1)
     end = time.perf_counter()
     time2 = end - start
     
@@ -36,6 +36,8 @@ def main(path):
     print("OPT: ", err_num)
     print("ALG: ", cost, "Time: ", time2)
     print("approximation ratio: ", cost / err_num)
+    #nx.draw(G)
+    #plt.show()
     
     # plot
     iteration = list(range(0, len(cost_history)))
@@ -44,7 +46,7 @@ def main(path):
     plt.xlabel("iteration")
     plt.ylabel("cost")
     plt.title("number of errors in {}-ploid".format(N))
-    #plt.savefig("./../result/250114_{}-ploid.png".format(N))
+    plt.savefig("./../result/250115_{}-ploid.png".format(N))
     plt.show()
 
 #main('../data/diploid/planar_data/input_0.txt')   
