@@ -26,7 +26,7 @@ def rand_except_i(i):
 def random_data_for_polyploid(read_num, N):
     r = random.randint(read_num - read_num // 10, read_num + read_num // 10)
     s = r
-    min_range = read_num // 5
+    min_range = read_num // 10
     
     # generate answer of haplotypes
     haplotypes = []
@@ -98,4 +98,4 @@ def gen_data(path, read_num, N):
             for hap in haplotypes:
                 f.write(''.join([str(char) for char in hap]) + '\n')
 
-gen_data('../data/polyploid', 100, [2, 3, 4, 8])
+gen_data('../data/polyploid', 100, [4, 8, 16, 32])

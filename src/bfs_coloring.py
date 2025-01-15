@@ -15,9 +15,14 @@ def bfs_coloring(G, H, s, r, N):
                     color[u] = color[v]
                 else:
                     color_option = list(range(0, N))
+                    min_cost = s
+                    min_color = -1
                     for w in G.neighbors(u):
                         if color[w] != -1:
                             color_option[color[w]] = -1
+                            min_cost = min(min_cost, G[u][w]['weight'])
+                            if min_cost == G[u][w]['weight']:
+                                min_color = color[w]
                     color_candidate = []
                     for i in range(0, len(color_option)):
                         if color_option[i] != -1:
@@ -25,6 +30,6 @@ def bfs_coloring(G, H, s, r, N):
                     if len(color_candidate) > 0:
                         color[u] = random.choice(color_candidate)
                     else:
-                        color[u] = random.randint(0, N - 1)
+                        color[u] = min_color      
                 q.append(u)
     return color
