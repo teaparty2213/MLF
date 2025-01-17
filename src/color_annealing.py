@@ -5,7 +5,7 @@ import random
 import math
 import networkx as nx
 
-def color_annealing(r, s, N, G, H, alpha, neighbor_rate):
+def color_annealing(r, s, N, G, H, I, alpha, neighbor_rate):
     cost = 0
     cost_history = []
     T = 0 # initial temperature
@@ -16,10 +16,10 @@ def color_annealing(r, s, N, G, H, alpha, neighbor_rate):
         if G.degree(v) > G.degree(start):
             start = v
     color = bfs_coloring(G, H, start, r, N)
-    for e in G.edges():
+    for e in I.edges():
         if color[e[0]] == color[e[1]]:
-            cost += G[e[0]][e[1]]['weight']
-        T += G[e[0]][e[1]]['weight'] # high temperature
+            cost += I[e[0]][e[1]]['weight']
+        T += I[e[0]][e[1]]['weight'] # high temperature
     cost_history.append(cost)
     
     # iteration
@@ -33,8 +33,8 @@ def color_annealing(r, s, N, G, H, alpha, neighbor_rate):
             for i in range(0, N):
                 if i != color[v]: # change v's color to i
                     delta = 0
-                    for u in G.neighbors(v):
-                        w = G[v][u]['weight']
+                    for u in I.neighbors(v):
+                        w = I[v][u]['weight']
                         if color[u] == i:
                             delta += w
                         elif color[u] == color[v]:
@@ -64,7 +64,7 @@ def color_annealing(r, s, N, G, H, alpha, neighbor_rate):
         iteration += 1
         cost_history.append(cost)
         
-        if iteration % 100 == 0:
-            print("iteration: ", iteration, "cost: ", cost, "T: ", T)
+        #if iteration % 100 == 0:
+            #print("iteration: ", iteration, "cost: ", cost, "T: ", T)
     
     return cost, color, cost_history
