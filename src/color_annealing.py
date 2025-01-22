@@ -25,7 +25,7 @@ def color_annealing(r, s, N, G, H, I, alpha, neighbor_rate):
     # iteration
     stay = 0
     iteration = 0
-    while (T > 0.0001 and stay < 30):
+    while (T > 0.0001 and stay < 50):
         delta_min = r * s
         delta_min_list = []
         V = [random.randint(0, r - 1) for _ in range(0, round(r * neighbor_rate))]
