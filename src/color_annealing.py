@@ -5,7 +5,7 @@ import random
 import math
 import networkx as nx
 
-def color_annealing(r, s, N, G, H, I, alpha, neighbor_rate):
+def color_annealing(r, s, N, G, H, I, ans, alpha, neighbor_rate):
     cost = 0
     cost_history = []
     T = 0 # initial temperature
@@ -16,6 +16,13 @@ def color_annealing(r, s, N, G, H, I, alpha, neighbor_rate):
         if G.degree(v) > G.degree(start):
             start = v
     color = bfs_coloring(G, H, start, r, N)
+    
+    ''' # 初期解としてOPTに近いものを与えてみる
+    C = [random.randint(0, r - 1) for _ in range(0)] # 変えるリード
+    for c in C:
+        color[c] = random.randint(0, N - 1) '''
+    
+    # initial cost and temperature
     for e in I.edges():
         if color[e[0]] == color[e[1]]:
             cost += I[e[0]][e[1]]['weight']
