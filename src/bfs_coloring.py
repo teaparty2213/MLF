@@ -3,7 +3,7 @@ import random
 from collections import deque
 
 def bfs_coloring(G, H, s, r, N):
-    color = [-1] * r
+    color = [-1 for _ in range(r)]
     q = deque()
     q.append(s)
     color[s] = 0
