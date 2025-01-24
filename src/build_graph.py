@@ -15,7 +15,7 @@ def read_range(r, s, M):
 def edge_weight_calc(i, j, M): # compare M[i] and M[j]
     sum = 0
     for k in range(0, len(M[i])):
-        if (M[i][k] != '-' and M[j][k] != '-'):
+        if (M[i][k] != -1 and M[j][k] != -1):
             if (M[i][k] != M[j][k]):
                 sum += 1
     return sum
@@ -29,6 +29,7 @@ def build_graph(r, s, M, read_share_ratio):
         G.add_node(i)
         H.add_node(i)
         I.add_node(i)
+    for i in range(0, r):
         start_i = read_range_list[i][0]
         end_i = read_range_list[i][1]
         len_i = end_i - start_i + 1
