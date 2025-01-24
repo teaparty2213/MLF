@@ -24,14 +24,19 @@ def rand_except_i(i):
             return x
     
 def random_data_for_polyploid(read_num, N):
-    r = read_num #random.randint(read_num - read_num // 10, read_num + read_num // 10)
+    r = int(read_num * N / 4) #random.randint(read_num - read_num // 10, read_num + read_num // 10)
     s = r
     min_range = read_num // 10
     
     # generate answer of haplotypes
     haplotypes = []
-    for i in range(0, N):
-        hap = list(np.random.randint(0, 4, size=s))
+    hap0 = list(np.random.randint(0, 4, size=s))
+    haplotypes.append(hap0)
+    for i in range(1, N):
+        C = [random.randint(0, s - 1) for _ in range(0, int(s * 0.2))] # changeable sites
+        hap = hap0[:]
+        for c in C:
+            hap[c] = rand_except_i(hap[c])
         haplotypes.append(hap)
     
     # generate allele matrix M and ans_list
@@ -42,6 +47,7 @@ def random_data_for_polyploid(read_num, N):
     err_num = 0
     for i in range(r):
         if (i > 1):
+            #if random.random() < 1 / N ** (1 / min_range): # これを使うと最終的に推定するハプロタイプに隙間が多くなり，ALGがOPTより小さくなる(sparse data)
             if random.random() < 1 / N:
                 start_idx += 1
                 end_idx += 1
@@ -75,8 +81,9 @@ def random_data_for_polyploid(read_num, N):
             del_column_count += 1
     s -= del_column_count
     new_M = [[M[i][j] for j in valid_columns] for i in range(r)]
+    new_haplotypes = [[haplotypes[i][j] for j in valid_columns] for i in range(N)]
             
-    return r, s, new_M, err_num, ans_list, haplotypes
+    return r, s, new_M, err_num, ans_list, new_haplotypes
 
 def gen_data(path, read_num, N):
     # generate random data
