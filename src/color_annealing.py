@@ -45,7 +45,7 @@ def color_annealing(r, s, N, G, H, I, ans, alpha, neighbor_rate):
                         if color[u] == i:
                             delta += w
                         elif color[u] == color[v]:
-                            delta -= w
+                            delta -= w                    
                     if delta < delta_min:
                         delta_min_list = []
                         delta_min = delta
@@ -54,18 +54,18 @@ def color_annealing(r, s, N, G, H, I, ans, alpha, neighbor_rate):
                         delta_min_list.append((v, i))
         v, i = random.choice(delta_min_list)
         
-        if delta_min <= 0:
+        if delta_min < 0:
             color[v] = i
             cost += delta_min
-            if delta_min == 0:
-                stay += 1
+            stay = 0
         else:
             p = math.exp(-delta_min / T)
             if random.random() < p:
                 color[v] = i
                 cost += delta_min
-                stay = 0
-            else:
+                if delta_min > 0:
+                    stay = 0
+            if delta_min == 0:
                 stay += 1
         T *= alpha
         iteration += 1
