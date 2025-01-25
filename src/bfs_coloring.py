@@ -2,11 +2,11 @@ import networkx as nx
 import random
 from collections import deque
 
-def bfs_coloring(G, H, s, r, N):
+def bfs_coloring(G, H, start, r, s, N):
     color = [-1 for _ in range(r)]
     q = deque()
-    q.append(s)
-    color[s] = 0
+    q.append(start)
+    color[start] = 0
     while (len(q) != 0):
         v = q.popleft()
         for u in G.neighbors(v):
