@@ -23,56 +23,73 @@ def rand_except_i(i):
         if x != i:
             return x
     
-def random_data_for_polyploid(read_num, N):
-    r = int(read_num * N / 4) #random.randint(read_num - read_num // 10, read_num + read_num // 10)
+def random_data_for_polyploid(r, N):
     s = r
-    min_range = read_num // 10
+    read_range = 10 # 種によって異なるが今回はヒトゲノムを想定している．ロングリードの長さが10kbp程度でヒトゲノムのSNP密度は1kbpに1つ程度なので．
     
     # generate answer of haplotypes
     haplotypes = []
+    '''
     hap0 = list(np.random.randint(0, 4, size=s))
     haplotypes.append(hap0)
     for i in range(1, N):
-        C = [random.randint(0, s - 1) for _ in range(0, int(s * 0.2))] # changeable sites
+        C = [random.randint(0, s - 1) for _ in range(0, int(s * 0.5))] # changeable sites
         hap = hap0[:]
         for c in C:
             hap[c] = rand_except_i(hap[c])
+        haplotypes.append(hap)'''
+    for i in range(0, N):
+        hap = list(np.random.randint(0, 4, size=s))
         haplotypes.append(hap)
-    
+        
     # generate allele matrix M and ans_list
     M = []
     ans_list = []
-    start_idx = 0
-    end_idx = min_range - 1
     err_num = 0
-    for i in range(r):
-        if (i > 1):
-            #if random.random() < 1 / N ** (1 / min_range): # これを使うと最終的に推定するハプロタイプに隙間が多くなり，ALGがOPTより小さくなる(sparse data)
-            if random.random() < 1 / N:
-                start_idx += 1
-                end_idx += 1
-            if (end_idx >= s):
-                end_idx = s - 1
-        hap_num = np.random.randint(0, len(haplotypes))
-        ans_list.append(hap_num)
-        row = haplotypes[hap_num][:] # copy
-        for j in range(0, s):
-            if (start_idx <= j and j <= end_idx):
-                if (random.random() < 0.01): # 1 % error
-                    row[j] = rand_except_i(row[j])
-                    err_num += 1
-                else:
-                    row[j] = haplotypes[hap_num][j]
-            else:
-                row[j] = -1
+    #initial 3N reads (0 ~ 3N-1) (各ハプロタイプが各SNPを少なくとも2回カバーするようにしたい)
+    for i in range(0, N):
+        ans_list.append(i)
+        ans_list.append(i)
+    for _ in range(0, N):
+        ans_list.append(random.randint(0, N - 1))
+    random.shuffle(ans_list)
+    for i in range(len(ans_list)):
+        row = haplotypes[ans_list[i]][:]
+        for j in range(0, read_range):
+            if random.random() < 0.01: # 1 % error
+                row[j] = rand_except_i(row[j])
+                err_num += 1
+        for j in range(read_range, s):
+            row[j] = -1
+        M.append(row)
+    
+    # remaining reads (3N ~ r)
+    start_idx = 0
+    end_idx = read_range - 1
+    for i in range(3 * N, r):
+        hap_idx = random.randint(0, N - 1)
+        ans_list.append(hap_idx)
+        
+        if random.random() < 1/N: # 次のリードのstart_idxが1つ進む
+            start_idx += 1
+            end_idx += 1
+        row = haplotypes[hap_idx][:]
+        for j in range(0, start_idx):
+            row[j] = -1
+        for j in range(start_idx, end_idx + 1):
+            if random.random() < 0.01: # 1 % error
+                row[j] = rand_except_i(row[j])
+                err_num += 1
+        for j in range(end_idx + 1, s):
+            row[j] = -1
         M.append(row)
     
     # check if there is a column with all -1
     valid_columns = []
     del_column_count = 0
-    for j in range(s):
+    for j in range(0, s):
         all_negative = True
-        for i in range(r):
+        for i in range(0, r):
             if (M[i][j] != -1):
                 valid_columns.append(j)
                 all_negative = False
@@ -80,8 +97,8 @@ def random_data_for_polyploid(read_num, N):
         if all_negative:
             del_column_count += 1
     s -= del_column_count
-    new_M = [[M[i][j] for j in valid_columns] for i in range(r)]
-    new_haplotypes = [[haplotypes[i][j] for j in valid_columns] for i in range(N)]
+    new_M = [[M[i][j] for j in valid_columns] for i in range(0, r)]
+    new_haplotypes = [[haplotypes[i][j] for j in valid_columns] for i in range(0, N)]
             
     return r, s, new_M, err_num, ans_list, new_haplotypes
 
