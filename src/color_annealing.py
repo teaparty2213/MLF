@@ -15,10 +15,11 @@ def color_annealing(r, s, N, G, H, I, ans, alpha, neighbor_rate):
     for v in G.nodes():
         if G.degree(v) > G.degree(start):
             start = v
-    color = bfs_coloring(G, H, start, r, N)
+    color = bfs_coloring(G, H, start, r, s, N)
     
     ''' # 初期解としてOPTに近いものを与えてみる
-    C = [random.randint(0, r - 1) for _ in range(0)] # 変えるリード
+    color = ans
+    C = [random.randint(0, r - 1) for _ in range(8)] # 変えるリード
     for c in C:
         color[c] = random.randint(0, N - 1) '''
     
