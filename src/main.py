@@ -7,7 +7,7 @@ from build_graph import build_graph
 from color_annealing import color_annealing
 from open_file_for_polyploid import read_file_of_polyploid
 from rand_index import rand_index
-from reconstruct_hap import recostruct_haplotype
+from reconstruct_hap import reconstruct_haplotype
 from sklearn.metrics.cluster import adjusted_rand_score
 import numpy as np
 import time
@@ -32,6 +32,7 @@ def main(path):
         # heuristic
         app_set = []
         ARI_set = []
+        time_set = []
         OPT = 0
         
         for i in range(0, 1):
@@ -50,6 +51,7 @@ def main(path):
             ARI = adjusted_rand_score(ans_list, color)
             app_set.append(cost / OPT)
             ARI_set.append(ARI)
+            time_set.append(time2)
             
             if i == 0:
                 iteration = list(range(0, len(cost_history)))
@@ -60,20 +62,23 @@ def main(path):
                 plt.ylabel("cost")
                 plt.title("number of errors in {}-ploid".format(N))
                 plt.legend(loc="upper right")
-                #plt.savefig("./../result/250124_{}-ploid.png".format(N))
-                
-                recostruct_haplotype(r, s, N, M, color, haplotypes)
-        
+                plt.savefig("./../result/250126_{}-ploid_q=N.png".format(N))
+                reconstruct_haplotype(r, s, N, M, color, haplotypes)
+        '''
         app_e = statistics.mean(app_set)
         app_v = statistics.variance(app_set)
         ARI_e = statistics.mean(ARI_set)
         ARI_v = statistics.variance(ARI_set)
+        time_e = statistics.mean(time_set)
+        time_v = statistics.variance(time_set)
         
         print("OPT: ", OPT)
         print("average approximation error: ", app_e)
         print("variance of approximation error: ", app_v)
         print("average ARI: ", ARI_e)
         print("variance of ARI: ", ARI_v)
-
-data = ['../data/polyploid/input_0.txt', '../data/polyploid/input_1.txt', '../data/polyploid/input_2.txt']
+        print("average time: ", time_e)
+        print("variance of time: ", time_v)'''
+        
+data = ['../data/polyploid/input_0_q=N.txt', '../data/polyploid/input_1_q=N.txt', '../data/polyploid/input_2_q=N.txt']
 main(data)
