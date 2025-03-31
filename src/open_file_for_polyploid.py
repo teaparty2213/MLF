@@ -5,7 +5,7 @@
 import numpy as np
 
 def read_file_of_polyploid(file):
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
     N = int(lines[0].strip()) # ploidy
     r = int(lines[1].strip()) # number of reads

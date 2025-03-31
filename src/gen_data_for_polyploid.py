@@ -70,7 +70,7 @@ def random_data_for_polyploid(r, N):
         hap_idx = random.randint(0, N - 1)
         ans_list.append(hap_idx)
         
-        if random.random() < 1/N: # 次のリードのstart_idxが1つ進む
+        if random.random() < 1/2: # 次のリードのstart_idxが1つ進む
             start_idx += 1
             end_idx += 1
         row = haplotypes[hap_idx][:]
@@ -108,7 +108,7 @@ def gen_data(path, read_num, N):
     for i in range(0, file_num):
         n = N[i]
         r, s, M, err_num, ans_list, haplotypes = random_data_for_polyploid(read_num, n)
-        file = '{}/input_'.format(path) + str(i) + '.txt'
+        file = '{}/{}-ploid_r={}_s={}'.format(path, n, r, s) + '.txt'
         with open(file, 'w') as f:
             f.write(str(n) + '\n')
             f.write(str(r) + '\n')
@@ -122,4 +122,4 @@ def gen_data(path, read_num, N):
             for hap in haplotypes:
                 f.write(''.join([str(char) for char in hap]) + '\n')
 
-gen_data('../data/polyploid', 100, [4, 8, 16])
+gen_data('./data/', 100, [4, 8, 16])
