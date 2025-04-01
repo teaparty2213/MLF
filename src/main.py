@@ -41,6 +41,7 @@ def main():
             plt.ylabel("cost")
             plt.title("number of errors in {}-ploid".format(N))
             plt.legend(loc="upper right")
+            os.makedirs("./result", exist_ok=True)
             plt.savefig("./result/{}-ploid_r={}_s={}_cost.png".format(N, r, s))
             
             # print results

@@ -1,6 +1,7 @@
 import random
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 
 def edit_distance(hap1, hap2, s): # hamming distance between hap1 and hap2
     distance = 0
@@ -60,4 +61,5 @@ def reconstruct_haplotype(r, s, N, M, color, ans):
     plt.xlabel("Answer")
     plt.ylabel("Reconstructed")
     plt.title("Haplotype similarity matrix of {}-ploid".format(N))
+    os.makedirs("./result", exist_ok=True)
     plt.savefig("./result/{}-ploid_r={}_s={}_eval.png".format(N, r, s))
